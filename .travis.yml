@@ -1,0 +1,19 @@
+language: ruby
+
+dist: xenial
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.23.1
+  - DOCKER_COMPOSE_VERSION=1.24.1
+  - DOCKER_COMPOSE_VERSION=1.25.4
+
+services:
+  - docker
+
+before_install:
+  - ./script/install-docker-compose.sh
+  - docker version
+  - docker-compose version
+
+script:
+  - echo 'success'
