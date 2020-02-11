@@ -10,10 +10,15 @@ env:
 services:
   - docker
 
+stages:
+  - test
+
 before_install:
   - ./script/install-docker-compose.sh
   - docker version
   - docker-compose version
+  - docker ps -a
 
 script:
-  - echo 'success'
+  - ./script/travis_build.sh
+  - ./script/test.sh

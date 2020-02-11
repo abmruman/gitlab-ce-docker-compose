@@ -1,0 +1,39 @@
+version: "3.6"
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:${VERSION}
+    restart: always
+    hostname: ${HOSTNAME}
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://${HOSTNAME}'
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - "${SSH_PORT}:22"
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:443"
+    volumes:
+      - ${GITLAB_DIR}data:/var/opt/gitlab
+      - ${GITLAB_DIR}logs:/var/log/gitlab
+      - ${GITLAB_DIR}config:/etc/gitlab
+    secrets:
+      - gitlab_root_password
+  gitlab-runner:
+    image: gitlab/gitlab-runner:${RUNNER_VERSION}
+    # docker stack config, ignored by docker-compose
+    deploy:
+      mode: replicated
+      replicas: ${GITLAB_RUNNER_REPLICAS}
+
+secrets:
+  gitlab_root_password:
+    file: ${ROOT_PASSWORD_FILE}
+
+# these volumes will be used if you leave GITLAB_DIR=<blank>
+volumes:
+  data:
+    driver: ${DATA_DRIVER}
+  logs:
+    driver: ${LOGS_DRIVER}
+  config:
+    driver: ${CONFIG_DRIVER}
